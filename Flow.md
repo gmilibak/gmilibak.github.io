@@ -1,6 +1,8 @@
+---
 layout: page
 title: "Áramlástan"
 permalink: /flow/
+---
 
 # Áramlástan
 - nyugvó és mozgó folyadékok és gázok mechanikája
