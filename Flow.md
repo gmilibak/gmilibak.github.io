@@ -2,6 +2,7 @@
 layout: page
 title: "Áramlástan"
 permalink: /flow/
+theme: jekyll-theme-midnight
 ---
 
 # Áramlástan
