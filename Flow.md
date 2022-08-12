@@ -1,3 +1,7 @@
+layout: page
+title: "Áramlástan"
+permalink: /flow/
+
 # Áramlástan
 - nyugvó és mozgó folyadékok és gázok mechanikája
 - nincs pontos matematikai leírása a folyadékok áramlásának
