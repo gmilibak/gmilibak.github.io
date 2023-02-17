@@ -1,23 +1,23 @@
 ## Emergent behaviours on compute shaders
 
-CPU vs GPU:
+### CPU vs GPU:
 - both are computing processors
 - built with different architecture and for different purposes
 
-CPU:
+### CPU:
 - few cores
 - executes a wide variety of processes on the computer
 - have larger instruction set than GPU
 - an individual core is faster than a GPU core
 - better in bigger, serial tasks
 
-GPU:
+### GPU:
 - many cores (up to the hundreds or thousands)
 - started out as handling specific 3D rendering tasks
 - evolved into a more programmable parallel processor
 - best for processes that can be divided across these cores
 
-Compute shader:
+### Compute shader:
 - a tool to utilize the advantages of the GPU's parallel processing
 - written in HLSL (High-Level Shader Language)
   - the code written in a HLSL kernel is like the body of a loop written for CPU
@@ -47,7 +47,7 @@ Defining threadcount and indexing:
   - shaderObject.Dispatch(0, 1920 / 8, 1080 / 8, 2); 
   - [numthreads(8,8,1)]
 
-ComputeBuffer:
+### ComputeBuffer:
 - Unity class to load data into GPU
 - can hold an array of arbitrary structured data
 - best to define 'struct' as an element of the array
@@ -57,16 +57,18 @@ ComputeBuffer:
 - so how to distribute calculations on ComputeBuffer elements on the GPU cores?
   - by defining threads and threadgroups in one dimension
 
-Cellular Automata
+### Cellular Automata
 - grid based, each cell has its own state
 - evolving in discrete steps based on a set of rules
 - Conway's game of life
+  - each cell state is depending on the state of the neigbors <br>
+![Image](/png/conway.png) 
 
-Emergent Behavior
+### Emergent Behavior
 - the result of the relationships and interactions between individual parts
 - not explicitly described by the behavior of the components, it's a "side effect"
 
-Boids
+### Boids
 - algorithm to simulate flocking behaviour
 - originally developed by Craig Reynolds in 1986
 - three simple rules
