@@ -7,31 +7,40 @@ CPU vs GPU:
 CPU:
 - few cores
 - executes a wide variety of processes on the computer
+- have larger instruction set than GPU
+- an individual core is faster than a GPU core
+- better in bigger, serial tasks
 
 GPU:
 - many cores (up to the hundreds or thousands)
-- executes more specialized tasks
+- started out as handling specific 3D rendering tasks
+- evolved into a more programmable parallel processor
 - best for processes that can be divided across these cores
 
 Compute shader:
 - a tool to utilize the advantages of the GPU's parallel processing
 - written in HLSL (High-Level Shader Language)
-- useful for simulating complex systems or systems consisting 
+  - the code written in a HLSL kernel is like the body of a loop written for CPU
+- useful for simulating complex systems or systems consisting many individual agents
 
 Defining threadcount and indexing:
 - C# code in Unity to define threadgroups in three dimension <br>
-```ComputeShader::Dispatch(int kernelIndex, int threadGroupsX, int threadGroupsY, int threadGroupsZ);``` <br>
+```
+    ComputeShader::Dispatch(int kernelIndex, int threadGroupsX, int threadGroupsY, int threadGroupsZ);
+```
+
 - HLSL code defining the number of threads in each threadgroup for the three dimension <br>
-```
-#pragma kernel FillWithRed
+```markdown
+    #pragma kernel FillWithRed
 
-RWTexture2D<float4> res;
+    RWTexture2D<float4> res;
 
-[numthreads(1,1,1)] void FillWithRed (uint3 id : SV_DispatchThreadID)
-{
-  res[id.xy] = float4(1,0,0,1);
-}
+    [numthreads(1,1,1)] void FillWithRed (uint3 id : SV_DispatchThreadID)
+    {
+        res[id.xy] = float4(1,0,0,1);
+    }
 ```
+
 - example:
   - shaderObject.Dispatch(0, 1, 1, 1);
   - [numthreads(256,1,1)]
