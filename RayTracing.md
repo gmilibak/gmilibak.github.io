@@ -5,8 +5,14 @@
 - transporting information about all previous encounters
 - most rays does not perceived at all
 - reflection
-- refraction
-- diffusion
+- diffusion <br>
+<p align="center">
+  <img src="/png/reflection-specular-diffuse.png"/>
+</p>
+- refraction <br>
+<p align="center">
+  <img src="/png/refraction.png"/>
+</p>
 
 ### Ray
 - origin
@@ -21,7 +27,10 @@
 - ray intersect objects
 - find closest intersected object
 - ray reflected or refracted (or both, secondary rays)
-- shadow ray shot towards light source (secondary rays)
+- shadow ray shot towards light source (secondary rays)) <br>
+<p align="center">
+  <img src="/png/Ray_trace_diagram.png"/>
+</p>
 
 ### Path tracing
 - follow one ray over a series of reflection
@@ -36,8 +45,10 @@
 - color
 - roughness
 - specular (shiny) or diffuse reflection (matte)
-- specular and diffuse reflection (glossy)
-- https://en.wikipedia.org/wiki/Diffuse_reflection#/media/File:Lambert2.gif
+- specular and diffuse reflection (glossy) <br>
+<p align="center">
+  <img src="/png/reflection-light-angle-incidence.png"/>
+</p>
  
 ### Hardware
 - specialized hardware for ray tracing (RT Cores)
@@ -48,8 +59,11 @@
 ### Effects
 - hard shadows
 - soft shadows
+- global illumination (indirect lighting) <br>
+<p align="center">
+  <img src="/png/Different-shadows.jpg"/>
+</p>
 - glossy reflections
-- global illumination (indirect lighting)
 - background/foreground blur (depth of field)
 - motion blur
 
