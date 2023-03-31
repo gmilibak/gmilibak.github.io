@@ -13,7 +13,7 @@
 - refraction <br>
 <p align="center">
   <img src="/png/refraction.png"/>
-</p>
+</p><br>
 
 ### Ray
 - origin
@@ -42,9 +42,7 @@
 <p align="center">
   <img src="/png/BVH_schematics.png"/>
   <img src="/png/BVH_model.png"/>
-</p>
-
-### Rendering equation
+</p><br>
 
 ### Simulating material properties
 - Physically-based rendering (PBR)
@@ -71,7 +69,7 @@
 - global illumination (indirect lighting) <br>
 <p align="center">
   <img src="/png/Different-shadows.jpg"/>
-</p> <br>
+</p>
 - glossy reflections
 - background/foreground blur (depth of field)
 - motion blur
@@ -81,7 +79,7 @@
 - denoising (AI-supported) <br>
 <p align="center">
   <img src="/png/denoising.jpg"/>
-</p> <br>
+</p>
 - sofwares are continuously getting optimized
 
 
