@@ -46,9 +46,13 @@
 
 ### Rendering equation
 
-### Material properties
-- color
-- roughness
+### Simulating material properties
+- Physically-based rendering (PBR)
+  - albedo (color)
+  - metallic
+  - roughness
+  - opacity
+  - and so on
 - specular (shiny) or diffuse reflection (matte)
 - specular and diffuse reflection (glossy) <br>
 <p align="center">
