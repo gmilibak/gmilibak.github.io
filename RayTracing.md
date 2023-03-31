@@ -48,7 +48,7 @@
 
 ### Simulating material properties
 - Physically-based rendering (PBR)
-  - albedo (color)
+  - color
   - metallic
   - roughness
   - opacity
