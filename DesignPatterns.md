@@ -26,6 +26,13 @@
 #### Abstract Factory
 
 - provides an interface to create families of related or dependent objects without specifying their concrete classes
+- the related objects share an interface too
+- components
+  - abstract factory: interface or abstract class that declares methods where each method is responsible for creating a specific type of object
+  - concrete factory: class that implements the **abstract factory**. Each factory is responsible for creating products that are consistent with each other
+  - abstract product: interface or abstract class that declares the commonalities for a type of object
+  - concrete product: class that implements the **abstract product**. Represent the actual product instances created by concrete factories. Different factories create different concrete products
+  - client code uses the abstract factory and defines the concrete factory to be used through a parameter
 
 ```java
 interface Button {
@@ -94,10 +101,228 @@ class MacOSFactory implements GUIFactory {
 }
 ```
 
+```python
+# Abstract Product
+class AbstractChair:
+    def sit_on(self):
+        pass
+
+# Concrete Products
+class ModernChair(AbstractChair):
+    def sit_on(self):
+        return "Sitting on a modern chair."
+
+class VictorianChair(AbstractChair):
+    def sit_on(self):
+        return "Sitting on a Victorian chair."
+
+# Abstract Factory
+class FurnitureFactory:
+    def create_chair(self):
+        pass
+
+# Concrete Factories
+class ModernFurnitureFactory(FurnitureFactory):
+    def create_chair(self):
+        return ModernChair()
+
+class VictorianFurnitureFactory(FurnitureFactory):
+    def create_chair(self):
+        return VictorianChair()
+
+# Client
+def client(furniture_factory):
+    chair = furniture_factory.create_chair()
+    print(chair.sit_on())
+
+# Usage
+modern_furniture = ModernFurnitureFactory()
+victorian_furniture = VictorianFurnitureFactory()
+
+client(modern_furniture)      # Output: Sitting on a modern chair.
+client(victorian_furniture)   # Output: Sitting on a Victorian chair.
+```
+
 #### Builder
 
 - lets the user build complex objects in small steps
 - by recombining the steps the user is able to create different representations or types of an object
+- useful when the 'other solution' is a bunch of constructors with different number of arguments
+- the methods building part of an object can return the object itself allowing to chain building methods
+- in java it is much like using the setters but more fluent
+- components
+  - director (optional): a class that holds methods to create the commonly built variants
+  - builder: interface with the different build steps declared
+  - concrete builder: class that implements the **builder** interface
+  - product: the object that is built by the concrete builder class
+ 
+```java
+interface HousePlan
+{
+    public void setBasement(String basement);
+  
+    public void setStructure(String structure);
+  
+    public void setRoof(String roof);
+  
+    public void setInterior(String interior);
+}
+  
+class House implements HousePlan
+{
+  
+    private String basement;
+    private String structure;
+    private String roof;
+    private String interior;
+  
+    public void setBasement(String basement) 
+    {
+        this.basement = basement;
+    }
+  
+    public void setStructure(String structure) 
+    {
+        this.structure = structure;
+    }
+  
+    public void setRoof(String roof) 
+    {
+        this.roof = roof;
+    }
+  
+    public void setInterior(String interior) 
+    {
+        this.interior = interior;
+    }
+  
+}
+  
+  
+interface HouseBuilder
+{
+  
+    public void buildBasement();
+  
+    public void buildStructure();
+  
+    public void buildRoof();
+  
+    public void buildInterior();
+  
+    public House getHouse();
+}
+  
+class IglooHouseBuilder implements HouseBuilder
+{
+    private House house;
+  
+    public IglooHouseBuilder() 
+    {
+        this.house = new House();
+    }
+  
+    public void buildBasement() 
+    {
+        house.setBasement("Ice Bars");
+    }
+  
+    public void buildStructure() 
+    {
+        house.setStructure("Ice Blocks");
+    }
+  
+    public void buildInterior() 
+    {
+        house.setInterior("Ice Carvings");
+    }
+  
+    public void buildRoof() 
+    {
+        house.setRoof("Ice Dome");
+    }
+  
+    public House getHouse() 
+    {
+        return this.house;
+    }
+}
+  
+class TipiHouseBuilder implements HouseBuilder
+{
+    private House house;
+  
+    public TipiHouseBuilder() 
+    {
+        this.house = new House();
+    }
+  
+    public void buildBasement() 
+    {
+        house.setBasement("Wooden Poles");
+    }
+  
+    public void buildStructure() 
+    {
+        house.setStructure("Wood and Ice");
+    }
+  
+    public void buildInterior() 
+    {
+        house.setInterior("Fire Wood");
+    }
+  
+    public void buildRoof() 
+    {
+        house.setRoof("Wood, caribou and seal skins");
+    }
+  
+    public House getHouse() 
+    {
+        return this.house;
+    }
+  
+}
+  
+class CivilEngineer 
+{
+  
+    private HouseBuilder houseBuilder;
+  
+    public CivilEngineer(HouseBuilder houseBuilder)
+    {
+        this.houseBuilder = houseBuilder;
+    }
+  
+    public House getHouse()
+    {
+        return this.houseBuilder.getHouse();
+    }
+  
+    public void constructHouse()
+    {
+        this.houseBuilder.buildBasement();
+        this.houseBuilder.buildStructure();
+        this.houseBuilder.buildRoof();
+        this.houseBuilder.buildInterior();
+    }
+}
+  
+class Builder
+{
+    public static void main(String[] args)
+    {
+        HouseBuilder iglooBuilder = new IglooHouseBuilder();
+        CivilEngineer engineer = new CivilEngineer(iglooBuilder);
+  
+        engineer.constructHouse();
+  
+        House house = engineer.getHouse();
+  
+        System.out.println("Builder constructed: "+ house);
+    }
+}
+```
 
 #### Factory Method
 
