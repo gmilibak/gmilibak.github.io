@@ -1,20 +1,103 @@
 # Design pattern
 
-## Definition
+## Origin
 
+- Design Patterns: Elements of Reusable Object-Oriented Software (1995)
+  - book written by the Gang of Four
+  - Erich Gamma, Richard Helm, Ralph Johnson and John Vlissides
+
+## Definition and properties
+
+- it is a general concept for solving commonly occurring problems in object oriented software design
+- it is a solution template for a particular problem
 - it is not code
-- it is a general concept for solving commonly occurring problems in software design
+- independent of language
 
 ## Why
+
+- when used in the correct situation it makes development easier
+- makes code more maintainable and robust
+- as they are widely known (even without acknowledging that a particular code is a design pattern) it makes code more readable
 
 ## Types
 
 ### Creational
 
-#### Singleton
+#### Abstract Factory
 
-- ensure that a class has only one instance, while providing a global access point to this instance.
-- java.util.Calendar
+- provides an interface to create families of related or dependent objects without specifying their concrete classes
+
+```java
+interface Button {
+void render();
+}
+
+interface Checkbox {
+    void render();
+}
+
+class WindowsButton implements Button {
+    @Override
+    public void render() {
+        System.out.println("Rendering Windows Button");
+    }
+}
+
+class WindowsCheckbox implements Checkbox {
+    @Override
+    public void render() {
+        System.out.println("Rendering Windows Checkbox");
+    }
+}
+
+class MacOSButton implements Button {
+    @Override
+    public void render() {
+        System.out.println("Rendering MacOS Button");
+    }
+}
+
+class MacOSCheckbox implements Checkbox {
+    @Override
+    public void render() {
+        System.out.println("Rendering MacOS Checkbox");
+    }
+}
+
+interface GUIFactory {
+    Button createButton();
+    Checkbox createCheckbox();
+}
+
+class WindowsFactory implements GUIFactory {
+    @Override
+    public Button createButton() {
+        return new WindowsButton();
+    }
+
+    @Override
+    public Checkbox createCheckbox() {
+        return new WindowsCheckbox();
+    }
+}
+
+class MacOSFactory implements GUIFactory {
+    @Override
+    public Button createButton() {
+        return new MacOSButton();
+    }
+
+    @Override
+    public Checkbox createCheckbox() {
+        return new MacOSCheckbox();
+    }
+}
+```
+
+#### Builder
+
+- lets the user build complex objects in small steps
+- by recombining the steps the user is able to create different representations or types of an object
 
 #### Factory Method
 
@@ -23,12 +106,38 @@
 - creation methods that construct objects from concrete classes
 - but the return type is usually an abstract class or interface
 
-#### Abstract Factory
+```java
+interface Product {
+    void create();
+}
 
-#### Builder
+class ConcreteProductA implements Product {
 
-- lets the user build complex objects in small steps
-- by recombining the steps the user is able to create different representations or types of an object
+    @Override
+    public void create() {
+        System.out.println("Creating Product A");
+    }
+}
+
+class ConcreteProductB implements Product {
+
+    @Override
+    public void create() {
+        System.out.println("Creating Product B");
+    }
+}
+
+abstract class Creator {
+    public abstract Product factoryMethod();
+}
+
+class ConcreteCreatorA extends Creator {
+    @Override
+    public Product factoryMethod() {
+        return new ConcreteProductA();
+    }
+}
+```
 
 #### Prototype
 
@@ -132,7 +241,33 @@ print(person1)  # Output: Name: Alice, Age: 30
 print(person2)  # Output: Name: Bob, Age: 30
 ```
 
+#### Singleton
+
+- ensure that a class has only one instance, while providing a global access point to this instance.
+
+```java
+public class Singleton {
+
+    private static Singleton instance;
+
+    private Singleton() {};
+
+    public static Singleton getInstance() {
+        if (instance == null) {
+            instance = new Singleton();
+        }
+    return instance;
+    }
+}
+```
+
 ### Structural
+
+#### Adapter
+
+#### Bridge
+
+#### Composite
 
 #### Decorator
 
@@ -144,29 +279,25 @@ print(person2)  # Output: Name: Bob, Age: 30
 - hides the complexities of the system and provides an interface for the client to access
 - involves a single class which provides simplified methods required by client and delegates calls to methods of existing system classes
 
-#### Adapter
-
-#### Bridge
+#### Flyweight
 
 #### Proxy
 
-#### Flyweight
-
-#### Composite
-
 ### Behavioral
 
-#### Iterator
+#### Chain of Responsibility
 
 #### Command
 
-#### Observer
+#### Interpreter
 
-#### Chain of Responsibility
+#### Iterator
 
 #### Mediator
 
 #### Memento
+
+#### Observer
 
 #### State
 
