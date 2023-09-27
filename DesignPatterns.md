@@ -1555,10 +1555,252 @@ public class IteratorPatternDemo {
   - mediator: interface or abstract class that defines the communication interface between **colleague** objects. Usually includes methods for registering, notifying and handling **colleague** interactions
   - concrete mediator: class that implements the **mediator** interface. Holds references to **colleague** objects
   - colleague: represents individual objects that need to communicate with each other but should avoid direct references. Aware of the **mediator** interface
+- benefits
+  - reduce dependencies between objects
+  - centralize control, communication logic in one place
+  - flexible, allows for dynamic and runtime communication between objects
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+// Mediator interface
+interface ChatMediator {
+    void sendMessage(String message, Colleague colleague);
+}
+
+// Concrete Mediator
+class ChatRoom implements ChatMediator {
+    private List<Colleague> colleagues = new ArrayList<>();
+
+    @Override
+    public void sendMessage(String message, Colleague colleague) {
+        for (Colleague c : colleagues) {
+            if (c != colleague) {
+                c.receive(message);
+            }
+        }
+    }
+
+    public void addColleague(Colleague colleague) {
+        colleagues.add(colleague);
+    }
+}
+
+// Colleague interface
+abstract class Colleague {
+    private ChatMediator mediator;
+
+    public Colleague(ChatMediator mediator) {
+        this.mediator = mediator;
+    }
+
+    public void send(String message) {
+        mediator.sendMessage(message, this);
+    }
+
+    public abstract void receive(String message);
+}
+
+// Concrete Colleague
+class User extends Colleague {
+    private String name;
+
+    public User(String name, ChatMediator mediator) {
+        super(mediator);
+        this.name = name;
+    }
+
+    @Override
+    public void receive(String message) {
+        System.out.println(name + " received: " + message);
+    }
+}
+
+// Client code
+public class MediatorPatternDemo {
+    public static void main(String[] args) {
+        ChatMediator chatMediator = new ChatRoom();
+
+        User user1 = new User("Alice", chatMediator);
+        User user2 = new User("Bob", chatMediator);
+        User user3 = new User("Charlie", chatMediator);
+
+        chatMediator.addColleague(user1);
+        chatMediator.addColleague(user2);
+        chatMediator.addColleague(user3);
+
+        user1.send("Hello, everyone!");
+    }
+}
+```
 
 #### Memento
 
+- allows the developer to capture and externalize an object's internal state without exposing its internal structure
+- provides a way to save and restore the state of an object
+- with it possible to implement features like undo/redo or the ability to revert an object to a previous state
+- components
+  - originator: the object whose state needs to be saved. Can create a **memento** object that represents its state
+  - memento: an object that stores the internal state of the **originator**. May include metadata or timestamps and typically immutable and only accessed by the **originator**
+  - caretaker: responsible for managing **mementos**. It can requests **mementos** from the **originator**
+
+```java
+// Memento class
+class Memento {
+    private String state;
+
+    public Memento(String state) {
+        this.state = state;
+    }
+
+    public String getState() {
+        return state;
+    }
+}
+
+// Originator class
+class Originator {
+    private String state;
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public Memento saveStateToMemento() {
+        return new Memento(state);
+    }
+
+    public void restoreStateFromMemento(Memento memento) {
+        state = memento.getState();
+    }
+}
+
+// Caretaker class
+class Caretaker {
+    private Memento memento;
+
+    public void saveState(Memento memento) {
+        this.memento = memento;
+    }
+
+    public Memento getSavedState() {
+        return memento;
+    }
+}
+
+// Client code
+public class MementoPatternDemo {
+    public static void main(String[] args) {
+        Originator originator = new Originator();
+        Caretaker caretaker = new Caretaker();
+
+        // Set and save the state
+        originator.setState("State 1");
+        caretaker.saveState(originator.saveStateToMemento());
+
+        // Change the state
+        originator.setState("State 2");
+
+        // Restore the state
+        originator.restoreStateFromMemento(caretaker.getSavedState());
+
+        System.out.println("Current State: " + originator.getState());
+    }
+}
+```
+
 #### Observer
+
+- defines a one-to-many dependency between objects so that when the one changes state all its dependents are notified automatically
+- implements a mechanism for objects to communicate and stay synchronized without being tightly coupled
+- components
+  - subject (publisher): the object that is of interest. Provides methods for attaching, detaching, and notifying observers
+  - concrete subject: class that implements **subject** interface and maintains the state. It notifies its **observers** when the state changes.
+  - observer (subscriber): interface or abstract class that defines updating mechanism
+  - concrete observer: class that implements **observer** interface. Register with the **subject** and receive updates when **subject's** state is changed
+- benefits
+  - decouples subject and observers
+  - flexibility: can add observers without any change
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+// Observer interface
+interface Observer {
+    void update(String message);
+}
+
+// Subject interface
+interface Subject {
+    void attach(Observer observer);
+    void detach(Observer observer);
+    void notifyObservers(String message);
+}
+
+// Concrete Subject
+class NewsAgency implements Subject {
+    private List<Observer> observers = new ArrayList<>();
+    private String news;
+
+    @Override
+    public void attach(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void detach(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(String message) {
+        for (Observer observer : observers) {
+            observer.update(message);
+        }
+    }
+
+    public void setNews(String news) {
+        this.news = news;
+        notifyObservers(news);
+    }
+}
+
+// Concrete Observer
+class NewsChannel implements Observer {
+    private String news;
+
+    @Override
+    public void update(String message) {
+        news = message;
+        displayNews();
+    }
+
+    public void displayNews() {
+        System.out.println("News Channel received news: " + news);
+    }
+}
+
+// Client code
+public class ObserverPatternDemo {
+    public static void main(String[] args) {
+        NewsAgency newsAgency = new NewsAgency();
+
+        NewsChannel channel1 = new NewsChannel();
+        NewsChannel channel2 = new NewsChannel();
+
+        newsAgency.attach(channel1);
+        newsAgency.attach(channel2);
+
+        newsAgency.setNews("Breaking news: Observer pattern works!");
+    }
+}
+```
 
 #### State
 
