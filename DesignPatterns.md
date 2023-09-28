@@ -1,8 +1,8 @@
-# Design pattern
+# Design patterns
 
 ## Origin
 
-- Design Patterns: Elements of Reusable Object-Oriented Software (1995)
+- Design Patterns: Elements of Reusable Object-Oriented Software (1994)
   - book written by the Gang of Four
   - Erich Gamma, Richard Helm, Ralph Johnson and John Vlissides
 
@@ -17,9 +17,25 @@
 
 - when used in the correct situation it makes development easier
 - makes code more maintainable and robust
-- as they are widely known (even without acknowledging that a particular code is a design pattern) it makes code more readable
+- when used well it reduces code duplication and improve code reusability
+- as they are widely known (even without acknowledging that a particular code is a design pattern) it makes code more readable and easier to communicate about
 
 ## Types
+
+- creational
+  - deals with object creation mechanisms, trying to create objects in a manner suitable to the situation
+  - abstracts the instantiation process, aiming to make it more flexible, efficient, and independent of the system's architecture
+  - focus on hiding object creation complexity, ensuring instantiation of the correct classes and promoting reuse of object creation code
+- structural
+  - deals with relationships between objects, how they are organized, and how they are composed into larger structures
+  - focus on ensuring that these structures are flexible, efficient, and easy to understand
+  - often involve creating new abstractions or introducing intermediary objects to simplify complex structures
+  - can be used when designing the architecture of a system or when refactoring existing code to make it more modular, maintainable, and extensible
+- behavioral
+  - patterns that address how objects and classes interact and communicate with each other
+  - focus on improving the communication, collaboration, and responsibility assignment between objects and classes in a system
+  - defines clear and reusable communication patterns between objects
+  - often encapsulate algorithms, responsibilities, and interactions within well-defined components, promoting separation of concerns and reducing dependencies between objects
 
 ### Creational
 
@@ -2090,6 +2106,96 @@ public class VisitorPatternExample {
         ObjectStructure objectStructure = new ObjectStructure();
 
         objectStructure.acceptVisitor(visitor);
+    }
+}
+```
+
+```java
+// Visitor interface
+interface Visitor {
+    void visit(Circle circle);
+    void visit(Square square);
+}
+
+// Concrete Visitor
+class AreaCalculator implements Visitor {
+    @Override
+    public void visit(Circle circle) {
+        double area = Math.PI * Math.pow(circle.getRadius(), 2);
+        System.out.println("Area of Circle: " + area);
+    }
+
+    @Override
+    public void visit(Square square) {
+        double area = square.getSide() * square.getSide();
+        System.out.println("Area of Square: " + area);
+    }
+}
+
+// Element interface
+interface Shape {
+    void accept(Visitor visitor);
+}
+
+// Concrete Elements
+class Circle implements Shape {
+    private double radius;
+
+    public Circle(double radius) {
+        this.radius = radius;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+}
+
+class Square implements Shape {
+    private double side;
+
+    public Square(double side) {
+        this.side = side;
+    }
+
+    public double getSide() {
+        return side;
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+}
+
+// Object Structure
+class ShapeCollection {
+    private List<Shape> shapes = new ArrayList<>();
+
+    public void addShape(Shape shape) {
+        shapes.add(shape);
+    }
+
+    public void applyVisitor(Visitor visitor) {
+        for (Shape shape : shapes) {
+            shape.accept(visitor);
+        }
+    }
+}
+
+// Client code
+public class VisitorPatternDemo {
+    public static void main(String[] args) {
+        ShapeCollection shapeCollection = new ShapeCollection();
+        shapeCollection.addShape(new Circle(5.0));
+        shapeCollection.addShape(new Square(4.0));
+
+        Visitor areaCalculator = new AreaCalculator();
+        shapeCollection.applyVisitor(areaCalculator);
     }
 }
 ```
