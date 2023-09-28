@@ -1804,8 +1804,293 @@ public class ObserverPatternDemo {
 
 #### State
 
+- allows objects to change behavior when its internal state changes
+- useful when an object has a finite number of states but needs to change between them
+- components
+  - context: provides interface for clients to interact with. Maintains the **state** object and delegates state-specific tasks
+  - state: interface that defines a set of methods that represents the behavior associated with different states
+  - concrete state: class that implements **state** and represents a specific state. Encapsulates the behavior and logic associated with that state
+
+```java
+// State interface
+interface State {
+    void handle();
+}
+
+// Concrete states
+class StateA implements State {
+    @Override
+    public void handle() {
+        System.out.println("State A is handling the request.");
+    }
+}
+
+class StateB implements State {
+    @Override
+    public void handle() {
+        System.out.println("State B is handling the request.");
+    }
+}
+
+// Context class
+class Context {
+    private State currentState;
+
+    public Context() {
+        currentState = new StateA(); // Initial state
+    }
+
+    public void changeState(State newState) {
+        currentState = newState;
+    }
+
+    public void request() {
+        currentState.handle();
+    }
+}
+
+// Example usage
+public class StatePatternExample {
+    public static void main(String[] args) {
+        Context context = new Context();
+        context.request(); // Output: State A is handling the request.
+
+        context.changeState(new StateB());
+        context.request(); // Output: State B is handling the request.
+    }
+}
+```
+
 #### Strategy
+
+- defines a family of algorithms, encapsulates each one of them, and makes them interchangeable
+- allows the client to choose an algorithm from a family of algorithms at runtime, without altering the code that uses these algorithms
+- components
+  - context: contains a reference to the **strategy** interface and responsible for configuring, maintaining and switching between **strategies**
+  - strategy: interface or abstract class that defines a set of methods that represent the various algorithms
+  - concrete strategy: class that implements **strategy** interface and represents a specific algorithm
+
+```java
+// Strategy interface
+interface PaymentStrategy {
+    void pay(int amount);
+}
+
+// Concrete strategies
+class CreditCardPayment implements PaymentStrategy {
+    private String cardNumber;
+
+    public CreditCardPayment(String cardNumber) {
+        this.cardNumber = cardNumber;
+    }
+
+    @Override
+    public void pay(int amount) {
+        System.out.println("Paid $" + amount + " with Credit Card (**** " + cardNumber.substring(cardNumber.length() - 4) + ")");
+    }
+}
+
+class PayPalPayment implements PaymentStrategy {
+    private String email;
+
+    public PayPalPayment(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public void pay(int amount) {
+        System.out.println("Paid $" + amount + " with PayPal (Email: " + email + ")");
+    }
+}
+
+// Context class
+class ShoppingCart {
+    private PaymentStrategy paymentStrategy;
+
+    public void setPaymentStrategy(PaymentStrategy paymentStrategy) {
+        this.paymentStrategy = paymentStrategy;
+    }
+
+    public void checkout(int amount) {
+        paymentStrategy.pay(amount);
+    }
+}
+
+// Example usage
+public class StrategyPatternExample {
+    public static void main(String[] args) {
+        ShoppingCart cart = new ShoppingCart();
+
+        cart.setPaymentStrategy(new CreditCardPayment("1234-5678-9876-5432"));
+        cart.checkout(100);
+
+        cart.setPaymentStrategy(new PayPalPayment("user@example.com"));
+        cart.checkout(50);
+    }
+}
+```
 
 #### Template method
 
+- defines the skeleton of an algorithm in a method but defers steps of the process to subclasses
+- allows the developer to create a template or blueprint for an algorithm with exchangeable parts while keeping the overall algorithm structure intact
+- components
+  - asbtract class: abstract class that defines the high-level algorithm and declares methods (template methods) that represents the steps of the algorithm. These methods can have a default implementation in the abstract class
+  - concrete subclass: class that extends the abstract class and provide specific implementations for the steps declared in the **abstract class**
+  - hook method: in addition to the template methods, the abstract class may include hook methods as well. These methods are optional steps that may or may not be overridden by the **concrete subclasses** and allows further customization
+
+```java
+// Abstract class defining the template method
+abstract class AbstractRecipe {
+    public void prepareRecipe() {
+        boilWater();
+        brew();
+        pourInCup();
+        if (customerWantsCondiments()) {
+            addCondiments();
+        }
+    }
+
+    abstract void brew();
+    abstract void addCondiments();
+
+    void boilWater() {
+        System.out.println("Boiling water");
+    }
+
+    void pourInCup() {
+        System.out.println("Pouring into cup");
+    }
+
+    // Hook method
+    boolean customerWantsCondiments() {
+        return true;
+    }
+}
+
+// Concrete subclass 1
+class CoffeeRecipe extends AbstractRecipe {
+    @Override
+    void brew() {
+        System.out.println("Dripping coffee through filter");
+    }
+
+    @Override
+    void addCondiments() {
+        System.out.println("Adding sugar and milk");
+    }
+}
+
+// Concrete subclass 2
+class TeaRecipe extends AbstractRecipe {
+    @Override
+    void brew() {
+        System.out.println("Steeping the tea");
+    }
+
+    @Override
+    void addCondiments() {
+        System.out.println("Adding lemon");
+    }
+
+    // Override the hook method to customize behavior
+    @Override
+    boolean customerWantsCondiments() {
+        // We can allow the customer to customize condiments in tea
+        return true;
+    }
+}
+
+// Example usage
+public class TemplateMethodPatternExample {
+    public static void main(String[] args) {
+        AbstractRecipe coffeeRecipe = new CoffeeRecipe();
+        AbstractRecipe teaRecipe = new TeaRecipe();
+
+        System.out.println("Making coffee:");
+        coffeeRecipe.prepareRecipe();
+
+        System.out.println("\nMaking tea:");
+        teaRecipe.prepareRecipe();
+    }
+}
+```
+
 #### Visitor
+
+- allows the developer to add new behaviors or operations to a group of related classes without altering their class structures
+- separates the algorithm from the object structure on which it operates
+- useful when there is a complex class hierarchy with various objects and the developer wants to perform different operations on these objects without cluttering these classes
+- components
+  - visitor: interface that defines a set of visit methods, each corresponding to a different type of **element** in the **object structure**
+  - concrete visitor: class that implement the **visitor** interface. Each visit method defines a specific operation to be performed on an **element** of the **object structure**
+  - element: interface that defines an 'accept()' method that takes a **visitor** as an argument. This method allows an **element** to accept a **visitor** and lets the **visitor** perform its operation on the **element**
+  - concrete element: class that implements the **element** interface. Each concrete element class can then call the appropriate **visitor's** visit method based on its type.
+  - object structure: collection of **elements**, typically organized in a way that forms a hierarchy or composite structure. The object structure provides a way for **visitors** to traverse and perform operations on its **elements**
+
+```java
+// Visitor interface
+interface Visitor {
+    void visit(ElementA element);
+    void visit(ElementB element);
+}
+
+// Concrete visitor
+class ConcreteVisitor implements Visitor {
+    @Override
+    public void visit(ElementA element) {
+        System.out.println("Visitor is processing ElementA");
+    }
+
+    @Override
+    public void visit(ElementB element) {
+        System.out.println("Visitor is processing ElementB");
+    }
+}
+
+// Element interface
+interface Element {
+    void accept(Visitor visitor);
+}
+
+// Concrete elements
+class ElementA implements Element {
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+}
+
+class ElementB implements Element {
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+}
+
+// Object structure
+class ObjectStructure {
+    private Element[] elements;
+
+    public ObjectStructure() {
+        elements = new Element[]{new ElementA(), new ElementB()};
+    }
+
+    public void acceptVisitor(Visitor visitor) {
+        for (Element element : elements) {
+            element.accept(visitor);
+        }
+    }
+}
+
+// Example usage
+public class VisitorPatternExample {
+    public static void main(String[] args) {
+        Visitor visitor = new ConcreteVisitor();
+        ObjectStructure objectStructure = new ObjectStructure();
+
+        objectStructure.acceptVisitor(visitor);
+    }
+}
+```
+
