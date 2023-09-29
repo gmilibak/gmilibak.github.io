@@ -39,6 +39,26 @@
 
 ## Creational
 
+### Singleton
+
+- ensure that a class has only one instance, while providing a global access point to this instance.
+
+```java
+public class Singleton {
+
+    private static Singleton instance;
+
+    private Singleton() {};
+
+    public static Singleton getInstance() {
+        if (instance == null) {
+            instance = new Singleton();
+        }
+    return instance;
+    }
+}
+```
+
 ### Abstract Factory
 
 - provides an interface to create families of related or dependent objects without specifying their concrete classes
@@ -158,6 +178,399 @@ victorian_furniture = VictorianFurnitureFactory()
 client(modern_furniture)      # Output: Sitting on a modern chair.
 client(victorian_furniture)   # Output: Sitting on a Victorian chair.
 ```
+
+### Factory Method
+
+- provides an interface for creating objects in a superclass, but allows subclasses to alter the type of objects that will be created
+- does not necessarily create new instances, can return cached objects
+- creation methods that construct objects from concrete classes
+- but the return type is usually an abstract class or interface
+- components
+  - product: abstract class or interface that defines the commonalities of the **concrete products**
+  - concrete product: class that implements **product** interface and provide specific implementation
+  - creator: abstract class or interface that declares the factory method that returns **product** object. Can contain common business logic that works with the created **products**
+  - concrete creator: class that implements the **creator** interface and implements the factory methods that returns **product** but actually creates **concrete products**
+
+```java
+interface Product {
+    void doSomething();
+}
+
+class ConcreteProductA implements Product {
+
+    @Override
+    public void doSomething() {
+        System.out.println("This is Product A");
+    }
+}
+
+class ConcreteProductB implements Product {
+
+    @Override
+    public void doSomething() {
+        System.out.println("This is Product B");
+    }
+}
+
+abstract class Creator {
+    public abstract Product factoryMethod();
+}
+
+class ConcreteCreatorA extends Creator {
+    @Override
+    public Product factoryMethod() {
+        return new ConcreteProductA();
+    }
+}
+```
+
+## Structural
+
+### Adapter
+
+- allows two incompatible interfaces to collaborate
+- useful when the developer want to use a class that does not fit with existing code and cannot be easily modified
+- components
+  - target interface: this is expected to stay the same (client side code)
+  - adaptee: the interface that has to be made compatible with the target interface
+  - adapter: implements the target interface and translate the code into calls the **adaptee** can process
+
+```java
+// Target Interface
+interface MediaPlayer {
+    void play(String mediaType, String fileName);
+}
+
+// Adaptee
+class AdvancedMediaPlayer {
+    void playVlc(String fileName) {
+        System.out.println("Playing VLC file: " + fileName);
+    }
+
+    void playMp4(String fileName) {
+        System.out.println("Playing MP4 file: " + fileName);
+    }
+}
+
+// Adapter
+class MediaAdapter implements MediaPlayer {
+    private AdvancedMediaPlayer advancedPlayer;
+
+    MediaAdapter(String mediaType) {
+        if (mediaType.equalsIgnoreCase("vlc")) {
+            advancedPlayer = new AdvancedMediaPlayer();
+        } else if (mediaType.equalsIgnoreCase("mp4")) {
+            advancedPlayer = new AdvancedMediaPlayer();
+        }
+    }
+
+    @Override
+    public void play(String mediaType, String fileName) {
+        if (mediaType.equalsIgnoreCase("vlc")) {
+            advancedPlayer.playVlc(fileName);
+        } else if (mediaType.equalsIgnoreCase("mp4")) {
+            advancedPlayer.playMp4(fileName);
+        }
+    }
+}
+
+// Client Code
+class AudioPlayer implements MediaPlayer {
+    @Override
+    public void play(String mediaType, String fileName) {
+        if (mediaType.equalsIgnoreCase("mp3")) {
+            System.out.println("Playing MP3 file: " + fileName);
+        } else if (mediaType.equalsIgnoreCase("vlc") || mediaType.equalsIgnoreCase("mp4")) {
+            MediaAdapter mediaAdapter = new MediaAdapter(mediaType);
+            mediaAdapter.play(mediaType, fileName);
+        } else {
+            System.out.println("Invalid media type: " + mediaType);
+        }
+    }
+}
+
+public class AdapterPatternDemo {
+    public static void main(String[] args) {
+        MediaPlayer audioPlayer = new AudioPlayer();
+
+        audioPlayer.play("mp3", "song.mp3");
+        audioPlayer.play("vlc", "movie.vlc");
+        audioPlayer.play("mp4", "video.mp4");
+    }
+}
+```
+
+### Facade
+
+- hides the complexities of the system and provides an interface for the client to access
+- involves a single class which provides simplified methods required by client and delegates calls to methods of existing system classes
+- components
+  - facade: central class that provided a simplified, high level interface for the client to use
+  - subsystems: set of classes and interfaces that perform specific tasks in the system
+  - client: client code that interacts with the **facade** instead of interacting the **subsystems** or knowing about the low level complexities
+- promotes loose coupling between the **client code** and the **subsystems**
+
+```java
+// Subsystem 1
+class CPU {
+    public void start() {
+        System.out.println("CPU: Starting...");
+    }
+
+    public void shutdown() {
+        System.out.println("CPU: Shutting down...");
+    }
+}
+
+// Subsystem 2
+class Memory {
+    public void load() {
+        System.out.println("Memory: Loading data...");
+    }
+
+    public void unload() {
+        System.out.println("Memory: Unloading data...");
+    }
+}
+
+// Subsystem 3
+class HardDrive {
+    public void read() {
+        System.out.println("Hard Drive: Reading data...");
+    }
+
+    public void write() {
+        System.out.println("Hard Drive: Writing data...");
+    }
+}
+
+// Facade
+class ComputerFacade {
+    private CPU cpu;
+    private Memory memory;
+    private HardDrive hardDrive;
+
+    public ComputerFacade() {
+        this.cpu = new CPU();
+        this.memory = new Memory();
+        this.hardDrive = new HardDrive();
+    }
+
+    public void start() {
+        System.out.println("ComputerFacade: Starting computer...");
+        cpu.start();
+        memory.load();
+        hardDrive.read();
+        System.out.println("ComputerFacade: Computer started.");
+    }
+
+    public void shutdown() {
+        System.out.println("ComputerFacade: Shutting down computer...");
+        cpu.shutdown();
+        memory.unload();
+        hardDrive.write();
+        System.out.println("ComputerFacade: Computer shut down.");
+    }
+}
+
+// Client code
+public class FacadePatternDemo {
+    public static void main(String[] args) {
+        ComputerFacade computer = new ComputerFacade();
+
+        // Start and shut down the computer using the Facade
+        computer.start();
+        System.out.println("Working on the computer...");
+        computer.shutdown();
+    }
+}
+```
+
+## Behavioral
+
+### Chain of Responsibility
+
+- allows the developer to pass requests along a chain of handlers
+- each handler decides whether to process the request or pass it along
+- promotes loose coupling between clients and handlers
+- components
+  - handler: interface or abtract class that defines the method for handling requests and contains a reference to the next handler in the chain
+  - concrete handler: class that implements the handler interface. makes a decision to handle or pass the request to the next **concrete handler**
+  - client: client code or object that initiates the request
+
+```java
+// Handler interface
+interface Handler {
+    void handleRequest(Request request);
+    void setNextHandler(Handler nextHandler);
+}
+
+// ConcreteHandler 1
+class ConcreteHandler1 implements Handler {
+    private Handler nextHandler;
+
+    @Override
+    public void handleRequest(Request request) {
+        if (request.getType() == RequestType.TYPE1) {
+            System.out.println("ConcreteHandler1 is handling the request.");
+        } else if (nextHandler != null) {
+            nextHandler.handleRequest(request);
+        } else {
+            System.out.println("No handler is able to process the request.");
+        }
+    }
+
+    @Override
+    public void setNextHandler(Handler nextHandler) {
+        this.nextHandler = nextHandler;
+    }
+}
+
+// ConcreteHandler 2
+class ConcreteHandler2 implements Handler {
+    private Handler nextHandler;
+
+    @Override
+    public void handleRequest(Request request) {
+        if (request.getType() == RequestType.TYPE2) {
+            System.out.println("ConcreteHandler2 is handling the request.");
+        } else if (nextHandler != null) {
+            nextHandler.handleRequest(request);
+        } else {
+            System.out.println("No handler is able to process the request.");
+        }
+    }
+
+    @Override
+    public void setNextHandler(Handler nextHandler) {
+        this.nextHandler = nextHandler;
+    }
+}
+
+// Request class
+class Request {
+    private final RequestType type;
+
+    public Request(RequestType type) {
+        this.type = type;
+    }
+
+    public RequestType getType() {
+        return type;
+    }
+}
+
+// Enum for request types
+enum RequestType {
+    TYPE1, TYPE2
+}
+
+// Client code
+public class ChainOfResponsibilityPatternDemo {
+    public static void main(String[] args) {
+        Handler handler1 = new ConcreteHandler1();
+        Handler handler2 = new ConcreteHandler2();
+
+        handler1.setNextHandler(handler2);
+
+        Request request1 = new Request(RequestType.TYPE1);
+        handler1.handleRequest(request1);
+
+        Request request2 = new Request(RequestType.TYPE2);
+        handler1.handleRequest(request2);
+    }
+}
+```
+
+### Observer
+
+- defines a one-to-many dependency between objects so that when the one changes state all its dependents are notified automatically
+- implements a mechanism for objects to communicate and stay synchronized without being tightly coupled
+- components
+  - subject (publisher): the object that is of interest. Provides methods for attaching, detaching, and notifying observers
+  - concrete subject: class that implements **subject** interface and maintains the state. It notifies its **observers** when the state changes.
+  - observer (subscriber): interface or abstract class that defines updating mechanism
+  - concrete observer: class that implements **observer** interface. Register with the **subject** and receive updates when **subject's** state is changed
+- benefits
+  - decouples subject and observers
+  - flexibility: can add observers without any change
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+// Observer interface
+interface Observer {
+    void update(String message);
+}
+
+// Subject interface
+interface Subject {
+    void attach(Observer observer);
+    void detach(Observer observer);
+    void notifyObservers(String message);
+}
+
+// Concrete Subject
+class NewsAgency implements Subject {
+    private List<Observer> observers = new ArrayList<>();
+    private String news;
+
+    @Override
+    public void attach(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void detach(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(String message) {
+        for (Observer observer : observers) {
+            observer.update(message);
+        }
+    }
+
+    public void setNews(String news) {
+        this.news = news;
+        notifyObservers(news);
+    }
+}
+
+// Concrete Observer
+class NewsChannel implements Observer {
+    private String news;
+
+    @Override
+    public void update(String message) {
+        news = message;
+        displayNews();
+    }
+
+    public void displayNews() {
+        System.out.println("News Channel received news: " + news);
+    }
+}
+
+// Client code
+public class ObserverPatternDemo {
+    public static void main(String[] args) {
+        NewsAgency newsAgency = new NewsAgency();
+
+        NewsChannel channel1 = new NewsChannel();
+        NewsChannel channel2 = new NewsChannel();
+
+        newsAgency.attach(channel1);
+        newsAgency.attach(channel2);
+
+        newsAgency.setNews("Breaking news: Observer pattern works!");
+    }
+}
+```
+
+## Creational (continued)
 
 ### Builder
 
@@ -340,51 +753,6 @@ class Builder
 }
 ```
 
-### Factory Method
-
-- provides an interface for creating objects in a superclass, but allows subclasses to alter the type of objects that will be created
-- does not necessarily create new instances, can return cached objects
-- creation methods that construct objects from concrete classes
-- but the return type is usually an abstract class or interface
-- components
-  - product: abstract class or interface that defines the commonalities of the **concrete products**
-  - concrete product: class that implements **product** interface and provide specific implementation
-  - creator: abstract class or interface that declares the factory method that returns **product** object. Can contain common business logic that works with the created **products**
-  - concrete creator: class that implements the **creator** interface and implements the factory methods that returns **product** but actually creates **concrete products**
-
-```java
-interface Product {
-    void doSomething();
-}
-
-class ConcreteProductA implements Product {
-
-    @Override
-    public void doSomething() {
-        System.out.println("This is Product A");
-    }
-}
-
-class ConcreteProductB implements Product {
-
-    @Override
-    public void doSomething() {
-        System.out.println("This is Product B");
-    }
-}
-
-abstract class Creator {
-    public abstract Product factoryMethod();
-}
-
-class ConcreteCreatorA extends Creator {
-    @Override
-    public Product factoryMethod() {
-        return new ConcreteProductA();
-    }
-}
-```
-
 ### Prototype
 
 - the Prototype pattern is useful in scenarios where object creation is resource-intensive
@@ -489,101 +857,7 @@ print(person1)  # Output: Name: Alice, Age: 30
 print(person2)  # Output: Name: Bob, Age: 30
 ```
 
-### Singleton
-
-- ensure that a class has only one instance, while providing a global access point to this instance.
-
-```java
-public class Singleton {
-
-    private static Singleton instance;
-
-    private Singleton() {};
-
-    public static Singleton getInstance() {
-        if (instance == null) {
-            instance = new Singleton();
-        }
-    return instance;
-    }
-}
-```
-
-## Structural
-
-### Adapter
-
-- allows two incompatible interfaces to collaborate
-- useful when the developer want to use a class that does not fit with existing code and cannot be easily modified
-- components
-  - target interface: this is expected to stay the same (client side code)
-  - adaptee: the interface that has to be made compatible with the target interface
-  - adapter: implements the target interface and translate the code into calls the **adaptee** can process
-
-```java
-// Target Interface
-interface MediaPlayer {
-    void play(String mediaType, String fileName);
-}
-
-// Adaptee
-class AdvancedMediaPlayer {
-    void playVlc(String fileName) {
-        System.out.println("Playing VLC file: " + fileName);
-    }
-
-    void playMp4(String fileName) {
-        System.out.println("Playing MP4 file: " + fileName);
-    }
-}
-
-// Adapter
-class MediaAdapter implements MediaPlayer {
-    private AdvancedMediaPlayer advancedPlayer;
-
-    MediaAdapter(String mediaType) {
-        if (mediaType.equalsIgnoreCase("vlc")) {
-            advancedPlayer = new AdvancedMediaPlayer();
-        } else if (mediaType.equalsIgnoreCase("mp4")) {
-            advancedPlayer = new AdvancedMediaPlayer();
-        }
-    }
-
-    @Override
-    public void play(String mediaType, String fileName) {
-        if (mediaType.equalsIgnoreCase("vlc")) {
-            advancedPlayer.playVlc(fileName);
-        } else if (mediaType.equalsIgnoreCase("mp4")) {
-            advancedPlayer.playMp4(fileName);
-        }
-    }
-}
-
-// Client Code
-class AudioPlayer implements MediaPlayer {
-    @Override
-    public void play(String mediaType, String fileName) {
-        if (mediaType.equalsIgnoreCase("mp3")) {
-            System.out.println("Playing MP3 file: " + fileName);
-        } else if (mediaType.equalsIgnoreCase("vlc") || mediaType.equalsIgnoreCase("mp4")) {
-            MediaAdapter mediaAdapter = new MediaAdapter(mediaType);
-            mediaAdapter.play(mediaType, fileName);
-        } else {
-            System.out.println("Invalid media type: " + mediaType);
-        }
-    }
-}
-
-public class AdapterPatternDemo {
-    public static void main(String[] args) {
-        MediaPlayer audioPlayer = new AudioPlayer();
-
-        audioPlayer.play("mp3", "song.mp3");
-        audioPlayer.play("vlc", "movie.vlc");
-        audioPlayer.play("mp4", "video.mp4");
-    }
-}
-```
+## Structural (continued)
 
 ### Bridge
 
@@ -864,92 +1138,6 @@ public class DecoratorPatternDemo {
         Coffee sugarMilkCoffee = new SugarDecorator(milkCoffee);
         System.out.println("Cost: $" + sugarMilkCoffee.cost());
         System.out.println("Ingredients: " + sugarMilkCoffee.getDescription());
-    }
-}
-```
-
-### Facade
-
-- hides the complexities of the system and provides an interface for the client to access
-- involves a single class which provides simplified methods required by client and delegates calls to methods of existing system classes
-- components
-  - facade: central class that provided a simplified, high level interface for the client to use
-  - subsystems: set of classes and interfaces that perform specific tasks in the system
-  - client: client code that interacts with the **facade** instead of interacting the **subsystems** or knowing about the low level complexities
-- promotes loose coupling between the **client code** and the **subsystems**
-
-```java
-// Subsystem 1
-class CPU {
-    public void start() {
-        System.out.println("CPU: Starting...");
-    }
-
-    public void shutdown() {
-        System.out.println("CPU: Shutting down...");
-    }
-}
-
-// Subsystem 2
-class Memory {
-    public void load() {
-        System.out.println("Memory: Loading data...");
-    }
-
-    public void unload() {
-        System.out.println("Memory: Unloading data...");
-    }
-}
-
-// Subsystem 3
-class HardDrive {
-    public void read() {
-        System.out.println("Hard Drive: Reading data...");
-    }
-
-    public void write() {
-        System.out.println("Hard Drive: Writing data...");
-    }
-}
-
-// Facade
-class ComputerFacade {
-    private CPU cpu;
-    private Memory memory;
-    private HardDrive hardDrive;
-
-    public ComputerFacade() {
-        this.cpu = new CPU();
-        this.memory = new Memory();
-        this.hardDrive = new HardDrive();
-    }
-
-    public void start() {
-        System.out.println("ComputerFacade: Starting computer...");
-        cpu.start();
-        memory.load();
-        hardDrive.read();
-        System.out.println("ComputerFacade: Computer started.");
-    }
-
-    public void shutdown() {
-        System.out.println("ComputerFacade: Shutting down computer...");
-        cpu.shutdown();
-        memory.unload();
-        hardDrive.write();
-        System.out.println("ComputerFacade: Computer shut down.");
-    }
-}
-
-// Client code
-public class FacadePatternDemo {
-    public static void main(String[] args) {
-        ComputerFacade computer = new ComputerFacade();
-
-        // Start and shut down the computer using the Facade
-        computer.start();
-        System.out.println("Working on the computer...");
-        computer.shutdown();
     }
 }
 ```
@@ -1236,101 +1424,7 @@ public class ProxyPatternDemo {
 }
 ```
 
-## Behavioral
-
-### Chain of Responsibility
-
-- allows the developer to pass requests along a chain of handlers
-- each handler decides whether to process the request or pass it along
-- promotes loose coupling between clients and handlers
-- components
-  - handler: interface or abtract class that defines the method for handling requests and contains a reference to the next handler in the chain
-  - concrete handler: class that implements the handler interface. makes a decision to handle or pass the request to the next **concrete handler**
-  - client: client code or object that initiates the request
-
-```java
-// Handler interface
-interface Handler {
-    void handleRequest(Request request);
-    void setNextHandler(Handler nextHandler);
-}
-
-// ConcreteHandler 1
-class ConcreteHandler1 implements Handler {
-    private Handler nextHandler;
-
-    @Override
-    public void handleRequest(Request request) {
-        if (request.getType() == RequestType.TYPE1) {
-            System.out.println("ConcreteHandler1 is handling the request.");
-        } else if (nextHandler != null) {
-            nextHandler.handleRequest(request);
-        } else {
-            System.out.println("No handler is able to process the request.");
-        }
-    }
-
-    @Override
-    public void setNextHandler(Handler nextHandler) {
-        this.nextHandler = nextHandler;
-    }
-}
-
-// ConcreteHandler 2
-class ConcreteHandler2 implements Handler {
-    private Handler nextHandler;
-
-    @Override
-    public void handleRequest(Request request) {
-        if (request.getType() == RequestType.TYPE2) {
-            System.out.println("ConcreteHandler2 is handling the request.");
-        } else if (nextHandler != null) {
-            nextHandler.handleRequest(request);
-        } else {
-            System.out.println("No handler is able to process the request.");
-        }
-    }
-
-    @Override
-    public void setNextHandler(Handler nextHandler) {
-        this.nextHandler = nextHandler;
-    }
-}
-
-// Request class
-class Request {
-    private final RequestType type;
-
-    public Request(RequestType type) {
-        this.type = type;
-    }
-
-    public RequestType getType() {
-        return type;
-    }
-}
-
-// Enum for request types
-enum RequestType {
-    TYPE1, TYPE2
-}
-
-// Client code
-public class ChainOfResponsibilityPatternDemo {
-    public static void main(String[] args) {
-        Handler handler1 = new ConcreteHandler1();
-        Handler handler2 = new ConcreteHandler2();
-
-        handler1.setNextHandler(handler2);
-
-        Request request1 = new Request(RequestType.TYPE1);
-        handler1.handleRequest(request1);
-
-        Request request2 = new Request(RequestType.TYPE2);
-        handler1.handleRequest(request2);
-    }
-}
-```
+## Behavioral (continued)
 
 ### Command
 
@@ -1731,94 +1825,6 @@ public class MementoPatternDemo {
         originator.restoreStateFromMemento(caretaker.getSavedState());
 
         System.out.println("Current State: " + originator.getState());
-    }
-}
-```
-
-### Observer
-
-- defines a one-to-many dependency between objects so that when the one changes state all its dependents are notified automatically
-- implements a mechanism for objects to communicate and stay synchronized without being tightly coupled
-- components
-  - subject (publisher): the object that is of interest. Provides methods for attaching, detaching, and notifying observers
-  - concrete subject: class that implements **subject** interface and maintains the state. It notifies its **observers** when the state changes.
-  - observer (subscriber): interface or abstract class that defines updating mechanism
-  - concrete observer: class that implements **observer** interface. Register with the **subject** and receive updates when **subject's** state is changed
-- benefits
-  - decouples subject and observers
-  - flexibility: can add observers without any change
-
-```java
-import java.util.ArrayList;
-import java.util.List;
-
-// Observer interface
-interface Observer {
-    void update(String message);
-}
-
-// Subject interface
-interface Subject {
-    void attach(Observer observer);
-    void detach(Observer observer);
-    void notifyObservers(String message);
-}
-
-// Concrete Subject
-class NewsAgency implements Subject {
-    private List<Observer> observers = new ArrayList<>();
-    private String news;
-
-    @Override
-    public void attach(Observer observer) {
-        observers.add(observer);
-    }
-
-    @Override
-    public void detach(Observer observer) {
-        observers.remove(observer);
-    }
-
-    @Override
-    public void notifyObservers(String message) {
-        for (Observer observer : observers) {
-            observer.update(message);
-        }
-    }
-
-    public void setNews(String news) {
-        this.news = news;
-        notifyObservers(news);
-    }
-}
-
-// Concrete Observer
-class NewsChannel implements Observer {
-    private String news;
-
-    @Override
-    public void update(String message) {
-        news = message;
-        displayNews();
-    }
-
-    public void displayNews() {
-        System.out.println("News Channel received news: " + news);
-    }
-}
-
-// Client code
-public class ObserverPatternDemo {
-    public static void main(String[] args) {
-        NewsAgency newsAgency = new NewsAgency();
-
-        NewsChannel channel1 = new NewsChannel();
-        NewsChannel channel2 = new NewsChannel();
-
-        newsAgency.attach(channel1);
-        newsAgency.attach(channel2);
-
-        newsAgency.setNews("Breaking news: Observer pattern works!");
     }
 }
 ```
