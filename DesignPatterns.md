@@ -271,6 +271,41 @@ client(victorian_furniture)   # Output: Sitting on a Victorian chair.
   - java.util.Arrays#asList()
 
 ```java
+public interface Movable {
+    // returns speed in MPH 
+    double getSpeed();
+}
+
+public class Bmw implements Movable {
+ 
+    @Override
+    public double getSpeed() {
+        return 268;
+    }
+}
+
+public interface MovableAdapter {
+    // returns speed in KMPH 
+    double getSpeed();
+}
+
+public class MovableAdapterImpl implements MovableAdapter {
+    private Movable luxuryCar;
+    
+    // standard constructors
+
+    @Override
+    public double getSpeed() {
+        return convertMPHtoKMPH(luxuryCar.getSpeed());
+    }
+    
+    private double convertMPHtoKMPH(double mph) {
+        return mph * 1.60934;
+    }
+}
+```
+
+```java
 // Target Interface
 interface MediaPlayer {
     void play(String mediaType, String fileName);
