@@ -42,6 +42,12 @@
 ### Singleton
 
 - ensure that a class has only one instance, while providing a global access point to this instance.
+- benefits
+  - minimize memory consumption
+  - consistency
+  - control access
+- example
+  - java.lang.Runtime
 
 ```java
 public class Singleton {
@@ -59,6 +65,76 @@ public class Singleton {
 }
 ```
 
+```java
+public class ThreadSafeSingleton {
+
+    private static ThreadSafeSingleton instance;
+
+    private ThreadSafeSingleton() {};
+
+    public static ThreadSafeSingleton getInstance() {
+        if (instance == null) {
+            synchronized (ThreadSafeSingleton.class) {
+                if (instance == null) {
+                    instance = new ThreadSafeSingleton();
+                }
+            }
+        }
+        return instance;
+    }
+
+}
+```
+
+### Factory Method
+
+- provides an interface for creating objects in a superclass, but allows subclasses to alter the type of objects that will be created
+- does not necessarily create new instances, can return cached objects
+- creation methods that construct objects from concrete classes
+- but the return type is usually an abstract class or interface
+- components
+  - product: abstract class or interface that defines the commonalities of the **concrete products**
+  - concrete product: class that implements **product** interface and provide specific implementation
+  - creator: abstract class or interface that declares the factory method that returns **product** object. Can contain common business logic that works with the created **products**
+  - concrete creator: class that implements the **creator** interface and implements the factory methods that returns **product** but actually creates **concrete products**
+- example
+  - java.util.Calendar
+  - java.nio.charset.Charset
+  - java.text.NumberFormat
+
+```java
+interface Product {
+    void doSomething();
+}
+
+class ConcreteProductA implements Product {
+
+    @Override
+    public void doSomething() {
+        System.out.println("This is Product A");
+    }
+}
+
+class ConcreteProductB implements Product {
+
+    @Override
+    public void doSomething() {
+        System.out.println("This is Product B");
+    }
+}
+
+abstract class Creator {
+    public abstract Product factoryMethod();
+}
+
+class ConcreteCreatorA extends Creator {
+    @Override
+    public Product factoryMethod() {
+        return new ConcreteProductA();
+    }
+}
+```
+
 ### Abstract Factory
 
 - provides an interface to create families of related or dependent objects without specifying their concrete classes
@@ -69,6 +145,8 @@ public class Singleton {
   - abstract product: interface or abstract class that declares the commonalities for a type of object
   - concrete product: class that implements the **abstract product**. Represent the actual product instances created by concrete factories. Different factories create different concrete products
   - client code uses the abstract factory and defines the concrete factory to be used through a parameter
+- example
+  - javax.xml.parsers.DocumentBuilderFactory
 
 ```java
 interface Button {
@@ -179,51 +257,6 @@ client(modern_furniture)      # Output: Sitting on a modern chair.
 client(victorian_furniture)   # Output: Sitting on a Victorian chair.
 ```
 
-### Factory Method
-
-- provides an interface for creating objects in a superclass, but allows subclasses to alter the type of objects that will be created
-- does not necessarily create new instances, can return cached objects
-- creation methods that construct objects from concrete classes
-- but the return type is usually an abstract class or interface
-- components
-  - product: abstract class or interface that defines the commonalities of the **concrete products**
-  - concrete product: class that implements **product** interface and provide specific implementation
-  - creator: abstract class or interface that declares the factory method that returns **product** object. Can contain common business logic that works with the created **products**
-  - concrete creator: class that implements the **creator** interface and implements the factory methods that returns **product** but actually creates **concrete products**
-
-```java
-interface Product {
-    void doSomething();
-}
-
-class ConcreteProductA implements Product {
-
-    @Override
-    public void doSomething() {
-        System.out.println("This is Product A");
-    }
-}
-
-class ConcreteProductB implements Product {
-
-    @Override
-    public void doSomething() {
-        System.out.println("This is Product B");
-    }
-}
-
-abstract class Creator {
-    public abstract Product factoryMethod();
-}
-
-class ConcreteCreatorA extends Creator {
-    @Override
-    public Product factoryMethod() {
-        return new ConcreteProductA();
-    }
-}
-```
-
 ## Structural
 
 ### Adapter
@@ -234,6 +267,8 @@ class ConcreteCreatorA extends Creator {
   - target interface: this is expected to stay the same (client side code)
   - adaptee: the interface that has to be made compatible with the target interface
   - adapter: implements the target interface and translate the code into calls the **adaptee** can process
+- example
+  - java.util.Arrays#asList()
 
 ```java
 // Target Interface
