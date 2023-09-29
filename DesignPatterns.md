@@ -37,9 +37,9 @@
   - defines clear and reusable communication patterns between objects
   - often encapsulate algorithms, responsibilities, and interactions within well-defined components, promoting separation of concerns and reducing dependencies between objects
 
-### Creational
+## Creational
 
-#### Abstract Factory
+### Abstract Factory
 
 - provides an interface to create families of related or dependent objects without specifying their concrete classes
 - the related objects share an interface too
@@ -159,7 +159,7 @@ client(modern_furniture)      # Output: Sitting on a modern chair.
 client(victorian_furniture)   # Output: Sitting on a Victorian chair.
 ```
 
-#### Builder
+### Builder
 
 - lets the user build complex objects in small steps
 - by recombining the steps the user is able to create different representations or types of an object
@@ -340,7 +340,7 @@ class Builder
 }
 ```
 
-#### Factory Method
+### Factory Method
 
 - provides an interface for creating objects in a superclass, but allows subclasses to alter the type of objects that will be created
 - does not necessarily create new instances, can return cached objects
@@ -380,7 +380,7 @@ class ConcreteCreatorA extends Creator {
 }
 ```
 
-#### Prototype
+### Prototype
 
 - the Prototype pattern is useful in scenarios where object creation is resource-intensive
 - creates new objects by copying existing ones
@@ -484,7 +484,7 @@ print(person1)  # Output: Name: Alice, Age: 30
 print(person2)  # Output: Name: Bob, Age: 30
 ```
 
-#### Singleton
+### Singleton
 
 - ensure that a class has only one instance, while providing a global access point to this instance.
 
@@ -504,9 +504,9 @@ public class Singleton {
 }
 ```
 
-### Structural
+## Structural
 
-#### Adapter
+### Adapter
 
 - allows two incompatible interfaces to collaborate
 - useful when the developer want to use a class that does not fit with existing code and cannot be easily modified
@@ -580,7 +580,7 @@ public class AdapterPatternDemo {
 }
 ```
 
-#### Bridge
+### Bridge
 
 - used to separate an object abstraction from its implementation
 - designed to handle variations in the class hierarchy
@@ -688,7 +688,7 @@ public class BridgePatternDemo {
 }
 ```
 
-#### Composite
+### Composite
 
 - used to compose objects into tree structures and handle these structures as individual objects
 - it allows the developer to work with individual objects and their compositions in a consistent manner
@@ -764,7 +764,7 @@ public class CompositePatternDemo {
 }
 ```
 
-#### Decorator
+### Decorator
 
 - allows a user to add new functionality to an existing object without altering its structure (either statically or dynamically)
 - wraps the original class and provides additional functionality keeping class methods signature intact
@@ -863,7 +863,7 @@ public class DecoratorPatternDemo {
 }
 ```
 
-#### Facade
+### Facade
 
 - hides the complexities of the system and provides an interface for the client to access
 - involves a single class which provides simplified methods required by client and delegates calls to methods of existing system classes
@@ -949,7 +949,7 @@ public class FacadePatternDemo {
 }
 ```
 
-#### Flyweight
+### Flyweight
 
 - focuses on optimizing memory usage by sharing as much properties among multiple similar objects as can
 - useful for handling a huge number of objects which have a significant amount of shared state but also contain unique information
@@ -1161,7 +1161,7 @@ public class DrawingClient extends JFrame{
 }
 ```
 
-#### Proxy
+### Proxy
 
 - provides a placeholder for another object to control access to it
 - allows developer to add additional layer of control over the interaction with the real object
@@ -1231,9 +1231,9 @@ public class ProxyPatternDemo {
 }
 ```
 
-### Behavioral
+## Behavioral
 
-#### Chain of Responsibility
+### Chain of Responsibility
 
 - allows the developer to pass requests along a chain of handlers
 - each handler decides whether to process the request or pass it along
@@ -1327,7 +1327,7 @@ public class ChainOfResponsibilityPatternDemo {
 }
 ```
 
-#### Command
+### Command
 
 - encapsulates a request as an object
 - turns the request into a standalone object that can be parameterized and holds all necessary informations
@@ -1402,7 +1402,7 @@ public class CommandPatternDemo {
 }
 ```
 
-#### Interpreter
+### Interpreter
 
 - used to define a grammar for interpreting a language
 - evaluate and execute expressions or statements in a language
@@ -1491,7 +1491,7 @@ public class InterpreterPatternDemo {
 }
 ```
 
-#### Iterator
+### Iterator
 
 - provides a way to access elements of a collection sequentially withouth exposing the underlying representation
 - with it the developer can iterate through elements in a consistent manner
@@ -1562,7 +1562,7 @@ public class IteratorPatternDemo {
 }
 ```
 
-#### Mediator
+### Mediator
 
 - centralizes interactions between objects through a mediator object
 - allows objects to communicate with each other without having direct references to each other
@@ -1651,7 +1651,7 @@ public class MediatorPatternDemo {
 }
 ```
 
-#### Memento
+### Memento
 
 - allows the developer to capture and externalize an object's internal state without exposing its internal structure
 - provides a way to save and restore the state of an object
@@ -1730,7 +1730,7 @@ public class MementoPatternDemo {
 }
 ```
 
-#### Observer
+### Observer
 
 - defines a one-to-many dependency between objects so that when the one changes state all its dependents are notified automatically
 - implements a mechanism for objects to communicate and stay synchronized without being tightly coupled
@@ -1818,7 +1818,7 @@ public class ObserverPatternDemo {
 }
 ```
 
-#### State
+### State
 
 - allows objects to change behavior when its internal state changes
 - useful when an object has a finite number of states but needs to change between them
@@ -1877,7 +1877,7 @@ public class StatePatternExample {
 }
 ```
 
-#### Strategy
+### Strategy
 
 - defines a family of algorithms, encapsulates each one of them, and makes them interchangeable
 - allows the client to choose an algorithm from a family of algorithms at runtime, without altering the code that uses these algorithms
@@ -1946,7 +1946,7 @@ public class StrategyPatternExample {
 }
 ```
 
-#### Template method
+### Template method
 
 - defines the skeleton of an algorithm in a method but defers steps of the process to subclasses
 - allows the developer to create a template or blueprint for an algorithm with exchangeable parts while keeping the overall algorithm structure intact
@@ -2032,7 +2032,7 @@ public class TemplateMethodPatternExample {
 }
 ```
 
-#### Visitor
+### Visitor
 
 - allows the developer to add new behaviors or operations to a group of related classes without altering their class structures
 - separates the algorithm from the object structure on which it operates
@@ -2199,4 +2199,3 @@ public class VisitorPatternDemo {
     }
 }
 ```
-
