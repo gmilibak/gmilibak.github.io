@@ -346,25 +346,30 @@ class Builder
 - does not necessarily create new instances, can return cached objects
 - creation methods that construct objects from concrete classes
 - but the return type is usually an abstract class or interface
+- components
+  - product: abstract class or interface that defines the commonalities of the **concrete products**
+  - concrete product: class that implements **product** interface and provide specific implementation
+  - creator: abstract class or interface that declares the factory method that returns **product** object. Can contain common business logic that works with the created **products**
+  - concrete creator: class that implements the **creator** interface and implements the factory methods that returns **product** but actually creates **concrete products**
 
 ```java
 interface Product {
-    void create();
+    void doSomething();
 }
 
 class ConcreteProductA implements Product {
 
     @Override
-    public void create() {
-        System.out.println("Creating Product A");
+    public void doSomething() {
+        System.out.println("This is Product A");
     }
 }
 
 class ConcreteProductB implements Product {
 
     @Override
-    public void create() {
-        System.out.println("Creating Product B");
+    public void doSomething() {
+        System.out.println("This is Product B");
     }
 }
 
