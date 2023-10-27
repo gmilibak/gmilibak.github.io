@@ -1414,6 +1414,7 @@ public class ChainOfResponsibilityPatternDemo {
 - benefits
   - decouples subject and observers
   - flexibility: can add observers without any change
+- JMS implementations
 
 ```java
 import java.util.ArrayList;
@@ -1560,95 +1561,6 @@ public class CommandPatternDemo {
 
         // Press the button to execute the command
         remoteControl.pressButton();
-    }
-}
-```
-
-### Interpreter
-
-- used to define a grammar for interpreting a language
-- evaluate and execute expressions or statements in a language
-- components
-  - abstract expression: interface or abstract class that declares an 'interpret()' method.
-  - terminal expression: represents basic building blocks of the language and does not have sub-expressions. Implements **abstract expression** (with the 'interpret()' method)
-  - non-terminal expression: represents complex expressions composed of one or more sub-expressions. Implements **abstract expression** (with the 'interpret()' method) but delegates the actual interpretation to the sub-expressions (and can perform additional operations) 
-  - context: contains information that shared among **expressions** and necessary for the interpretation
-  - client: responsible for creating expressions in order to execute the desired operations in the interpreted language. Also sets up the context and invokes 'interpret()'
-
-```java
-import java.util.Map;
-
-// Abstract Expression
-interface Expression {
-    int interpret(Map<String, Integer> context);
-}
-
-// Terminal Expression
-class NumberExpression implements Expression {
-    private int number;
-
-    public NumberExpression(int number) {
-        this.number = number;
-    }
-
-    @Override
-    public int interpret(Map<String, Integer> context) {
-        return number;
-    }
-}
-
-// Non-terminal Expression
-class AddExpression implements Expression {
-    private Expression leftOperand;
-    private Expression rightOperand;
-
-    public AddExpression(Expression left, Expression right) {
-        this.leftOperand = left;
-        this.rightOperand = right;
-    }
-
-    @Override
-    public int interpret(Map<String, Integer> context) {
-        int leftValue = leftOperand.interpret(context);
-        int rightValue = rightOperand.interpret(context);
-        return leftValue + rightValue;
-    }
-}
-
-// Context
-class Context {
-    private Map<String, Integer> variables;
-
-    public Context(Map<String, Integer> variables) {
-        this.variables = variables;
-    }
-
-    public int getVariableValue(String variableName) {
-        return variables.get(variableName);
-    }
-
-    public void setVariableValue(String variableName, int value) {
-        variables.put(variableName, value);
-    }
-}
-
-// Client code
-public class InterpreterPatternDemo {
-    public static void main(String[] args) {
-        // Define the variables and their values
-        Context context = new Context(Map.of("x", 5, "y", 7));
-
-        // Create expressions
-        Expression expression1 = new NumberExpression(10);
-        Expression expression2 = new NumberExpression(2);
-        Expression expression3 = new NumberExpression(3);
-
-        Expression addExpression = new AddExpression(expression1, expression2);
-        Expression complexExpression = new AddExpression(addExpression, expression3);
-
-        // Interpret the expressions
-        int result = complexExpression.interpret(context);
-        System.out.println("Result: " + result);
     }
 }
 ```
@@ -2275,3 +2187,95 @@ public class VisitorPatternExample {
     }
 }
 ```
+
+### Interpreter
+
+- used to define a grammar for interpreting a language
+- evaluate and execute expressions or statements in a language
+- components
+  - abstract expression: interface or abstract class that declares an 'interpret()' method.
+  - terminal expression: represents basic building blocks of the language and does not have sub-expressions. Implements **abstract expression** (with the 'interpret()' method)
+  - non-terminal expression: represents complex expressions composed of one or more sub-expressions. Implements **abstract expression** (with the 'interpret()' method) but delegates the actual interpretation to the sub-expressions (and can perform additional operations) 
+  - context: contains information that shared among **expressions** and necessary for the interpretation
+  - client: responsible for creating expressions in order to execute the desired operations in the interpreted language. Also sets up the context and invokes 'interpret()'
+
+```java
+import java.util.Map;
+
+// Abstract Expression
+interface Expression {
+    int interpret(Map<String, Integer> context);
+}
+
+// Terminal Expression
+class NumberExpression implements Expression {
+    private int number;
+
+    public NumberExpression(int number) {
+        this.number = number;
+    }
+
+    @Override
+    public int interpret(Map<String, Integer> context) {
+        return number;
+    }
+}
+
+// Non-terminal Expression
+class AddExpression implements Expression {
+    private Expression leftOperand;
+    private Expression rightOperand;
+
+    public AddExpression(Expression left, Expression right) {
+        this.leftOperand = left;
+        this.rightOperand = right;
+    }
+
+    @Override
+    public int interpret(Map<String, Integer> context) {
+        int leftValue = leftOperand.interpret(context);
+        int rightValue = rightOperand.interpret(context);
+        return leftValue + rightValue;
+    }
+}
+
+// Context
+class Context {
+    private Map<String, Integer> variables;
+
+    public Context(Map<String, Integer> variables) {
+        this.variables = variables;
+    }
+
+    public int getVariableValue(String variableName) {
+        return variables.get(variableName);
+    }
+
+    public void setVariableValue(String variableName, int value) {
+        variables.put(variableName, value);
+    }
+}
+
+// Client code
+public class InterpreterPatternDemo {
+    public static void main(String[] args) {
+        // Define the variables and their values
+        Context context = new Context(Map.of("x", 5, "y", 7));
+
+        // Create expressions
+        Expression expression1 = new NumberExpression(10);
+        Expression expression2 = new NumberExpression(2);
+        Expression expression3 = new NumberExpression(3);
+
+        Expression addExpression = new AddExpression(expression1, expression2);
+        Expression complexExpression = new AddExpression(addExpression, expression3);
+
+        // Interpret the expressions
+        int result = complexExpression.interpret(context);
+        System.out.println("Result: " + result);
+    }
+}
+```
+
+References:
+- https://refactoring.guru/design-patterns
