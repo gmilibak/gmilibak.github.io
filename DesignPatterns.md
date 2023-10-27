@@ -1492,7 +1492,6 @@ public class ObserverPatternDemo {
 
 ### Command
 
-- encapsulates a request as an object
 - turns the request into a standalone object that can be parameterized and holds all necessary informations
 - these can be used in queues as it decouples the sender (client) and receiver
 - components
@@ -1706,7 +1705,8 @@ class BreakfastMenuIterator implements Iterator<String> {
         if (!hasNext()) {
             throw new IllegalStateException("No more items to iterate.");
         }
-        return items[position++];
+        return items[position];
+	position++;
     }
 }
 
@@ -1960,6 +1960,7 @@ public class StatePatternExample {
   - context: contains a reference to the **strategy** interface and responsible for configuring, maintaining and switching between **strategies**
   - strategy: interface or abstract class that defines a set of methods that represent the various algorithms
   - concrete strategy: class that implements **strategy** interface and represents a specific algorithm
+- java.util.Arrays.sort()
 
 ```java
 // Strategy interface
@@ -2122,6 +2123,96 @@ public class TemplateMethodPatternExample {
 ```java
 // Visitor interface
 interface Visitor {
+    void calcArea(Circle circle);
+    void calcArea(Square square);
+}
+
+// Concrete Visitor
+class AreaCalculator implements Visitor {
+    @Override
+    public void calcArea(Circle circle) {
+        double area = Math.PI * Math.pow(circle.getRadius(), 2);
+        System.out.println("Area of Circle: " + area);
+    }
+
+    @Override
+    public void calcArea(Square square) {
+        double area = square.getSide() * square.getSide();
+        System.out.println("Area of Square: " + area);
+    }
+}
+
+// Element interface
+interface Shape {
+    void accept(Visitor visitor);
+}
+
+// Concrete Elements
+class Circle implements Shape {
+    private double radius;
+
+    public Circle(double radius) {
+        this.radius = radius;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.calcArea(this);
+    }
+}
+
+class Square implements Shape {
+    private double side;
+
+    public Square(double side) {
+        this.side = side;
+    }
+
+    public double getSide() {
+        return side;
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.calcArea(this);
+    }
+}
+
+// Object Structure
+class ShapeCollection {
+    private List<Shape> shapes = new ArrayList<>();
+
+    public void addShape(Shape shape) {
+        shapes.add(shape);
+    }
+
+    public void applyVisitor(Visitor visitor) {
+        for (Shape shape : shapes) {
+            shape.accept(visitor);
+        }
+    }
+}
+
+// Client code
+public class VisitorPatternDemo {
+    public static void main(String[] args) {
+        ShapeCollection shapeCollection = new ShapeCollection();
+        shapeCollection.addShape(new Circle(5.0));
+        shapeCollection.addShape(new Square(4.0));
+
+        Visitor areaCalculator = new AreaCalculator();
+        shapeCollection.applyVisitor(areaCalculator);
+    }
+}
+```
+
+```java
+// Visitor interface
+interface Visitor {
     void visit(ElementA element);
     void visit(ElementB element);
 }
@@ -2181,96 +2272,6 @@ public class VisitorPatternExample {
         ObjectStructure objectStructure = new ObjectStructure();
 
         objectStructure.acceptVisitor(visitor);
-    }
-}
-```
-
-```java
-// Visitor interface
-interface Visitor {
-    void visit(Circle circle);
-    void visit(Square square);
-}
-
-// Concrete Visitor
-class AreaCalculator implements Visitor {
-    @Override
-    public void visit(Circle circle) {
-        double area = Math.PI * Math.pow(circle.getRadius(), 2);
-        System.out.println("Area of Circle: " + area);
-    }
-
-    @Override
-    public void visit(Square square) {
-        double area = square.getSide() * square.getSide();
-        System.out.println("Area of Square: " + area);
-    }
-}
-
-// Element interface
-interface Shape {
-    void accept(Visitor visitor);
-}
-
-// Concrete Elements
-class Circle implements Shape {
-    private double radius;
-
-    public Circle(double radius) {
-        this.radius = radius;
-    }
-
-    public double getRadius() {
-        return radius;
-    }
-
-    @Override
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
-}
-
-class Square implements Shape {
-    private double side;
-
-    public Square(double side) {
-        this.side = side;
-    }
-
-    public double getSide() {
-        return side;
-    }
-
-    @Override
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
-}
-
-// Object Structure
-class ShapeCollection {
-    private List<Shape> shapes = new ArrayList<>();
-
-    public void addShape(Shape shape) {
-        shapes.add(shape);
-    }
-
-    public void applyVisitor(Visitor visitor) {
-        for (Shape shape : shapes) {
-            shape.accept(visitor);
-        }
-    }
-}
-
-// Client code
-public class VisitorPatternDemo {
-    public static void main(String[] args) {
-        ShapeCollection shapeCollection = new ShapeCollection();
-        shapeCollection.addShape(new Circle(5.0));
-        shapeCollection.addShape(new Square(4.0));
-
-        Visitor areaCalculator = new AreaCalculator();
-        shapeCollection.applyVisitor(areaCalculator);
     }
 }
 ```
